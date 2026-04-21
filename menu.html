@@ -1,0 +1,207 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>SargonStats - Menü</title>
+    <style>
+        :root {
+            --primary: #bb86fc;
+            --text: #ffffff;
+            --text-dark: #2c2a29;
+        }
+
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            font-family: 'Segoe UI', Roboto, Helvetica, sans-serif; 
+            user-select: none;
+        }
+
+        body { 
+            background-image: url('3.jpg');
+            background-size: cover; 
+            background-position: center; 
+            background-attachment: fixed;
+            height: 100vh; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            overflow: hidden;
+        }
+
+        /* MENÜ KARTI (Buzlu Cam) */
+        .menu-container {
+            width: 90%;
+            max-width: 400px;
+            background: rgba(255, 255, 255, 0.35);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 24px;
+            padding: 30px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        /* PROFİL BÖLÜMÜ */
+        .profile-section {
+            margin-bottom: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .user-photo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            margin-bottom: 15px;
+            background-color: #eee;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .user-name {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        /* ROZETLER İÇİN GEÇİCİ ALAN */
+        .badge-area {
+            display: flex;
+            gap: 5px;
+        }
+
+        .badge-placeholder {
+            width: 20px;
+            height: 20px;
+            background: rgba(44, 42, 41, 0.1);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: rgba(44, 42, 41, 0.4);
+            border: 1px dashed rgba(44, 42, 41, 0.3);
+        }
+
+        /* OYUN BUTONLARI */
+        .game-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn-game {
+            width: 100%;
+            background: white;
+            color: var(--text-dark);
+            padding: 20px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-game:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            background: #f8f8f8;
+        }
+
+        .btn-game:active {
+            transform: translateY(0);
+        }
+
+        /* ÇIKIŞ BUTONU */
+        .btn-logout {
+            margin-top: 30px;
+            background: transparent;
+            border: none;
+            color: #8b0000;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: underline;
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="menu-container">
+        <div class="profile-section">
+            <img id="user-photo" src="" alt="Profil" class="user-photo">
+            <div class="user-info">
+                <span id="user-name" class="user-name">Yükleniyor...</span>
+                <div class="badge-area">
+                    <div class="badge-placeholder" title="Yakında">?</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="game-list">
+            <button id="btn-okey" class="btn-game">Muğla Okeyi</button>
+            </div>
+
+        <button id="btn-logout" class="btn-logout">Oturumu Kapat</button>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDtzfLUK2paSlyY1wF7WlLhLQLpUztJogg",
+            authDomain: "sargonstats.firebaseapp.com",
+            projectId: "sargonstats",
+            storageBucket: "sargonstats.firebasestorage.app",
+            messagingSenderId: "334323498833",
+            appId: "1:334323498833:web:f6ddc5a63b940905da5d70"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // Kullanıcı Durumunu Kontrol Et
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // Kullanıcı bilgilerini ekrana yaz
+                document.getElementById('user-name').innerText = user.displayName;
+                document.getElementById('user-photo').src = user.photoURL || 'https://via.placeholder.com/80';
+            } else {
+                // Giriş yapmamışsa ana sayfaya gönder
+                window.location.href = "index.html";
+            }
+        });
+
+        // Muğla Okeyi Butonu
+        document.getElementById('btn-okey').addEventListener('click', () => {
+            window.location.href = "muglaokeyi.html";
+        });
+
+        // Çıkış İşlemi
+        document.getElementById('btn-logout').addEventListener('click', () => {
+            signOut(auth).then(() => {
+                window.location.href = "index.html";
+            });
+        });
+    </script>
+</body>
+</html>
