@@ -3,141 +3,254 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>Sargon Stats - Muğla Okeyi</title>
+    <title>SargonStats - Akıllı Masa</title>
     <style>
         :root {
-            --bg-color: #121212;
-            --surface: #1e1e1e;
-            --primary: #bb86fc;
-            --primary-variant: #3700b3;
-            --text: #ffffff;
-            --text-muted: #a0a0a0;
-            --danger: #cf6679;
-            --success: #03dac6;
+            --bg: #1a120b;
+            --surface: rgba(250, 243, 230, 0.90); 
+            --primary: #b07d3b; 
+            --primary-dark: #8c6228;
+            --danger: #b74b4b; 
+            --success: #d4b872; 
+            --total-box: #e6d7c3; 
+            --text-dark: #3e2723; 
+            --text-light: #f5f5f5;
         }
 
         * { 
-            box-sizing: border-box; 
-            margin: 0; 
-            padding: 0; 
-            font-family: 'Segoe UI', Roboto, Helvetica, sans-serif; 
-            user-select: none; 
-            -webkit-user-select: none; 
-            -webkit-touch-callout: none; 
-            -webkit-tap-highlight-color: transparent; 
-        }
-
-        html, body { 
-            height: 100%; 
-            width: 100%;
-            position: fixed; 
-            overflow-y: auto; 
-            overflow-x: hidden;
-            background-color: var(--bg-color); 
-            color: var(--text); 
-            display: flex; 
-            flex-direction: column; 
-        }
-
-        header { padding: 10px; background-color: var(--surface); text-align: center; border-bottom: 2px solid var(--primary); flex-shrink: 0;}
-        header h1 { font-size: 1.1rem; margin-bottom: 2px; }
-        header p { color: var(--text-muted); font-size: 0.8rem; }
-
-        .scoreboard { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; padding: 10px; background: var(--surface); text-align: center; flex-shrink: 0;}
-        .player-col h3 { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 2px; }
-        .player-col .score { font-size: 1.3rem; font-weight: bold; color: var(--primary); }
-
-        .input-area { 
-            padding: 10px; 
-            flex-grow: 1; 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: center; 
-            gap: 10px; 
-            overflow: hidden; 
+            box-sizing: border-box; margin: 0; padding: 0; 
+            font-family: 'Segoe UI', sans-serif; 
+            user-select: none; -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
         }
         
-        .input-box { background: var(--bg-color); border: 2px solid #333; border-radius: 8px; padding: 10px; text-align: center; font-size: 1.1rem; color: var(--text); cursor: pointer; transition: 0.2s; }
-        .input-box.active { border-color: var(--primary); background: rgba(187, 134, 252, 0.1); box-shadow: 0 0 10px rgba(187, 134, 252, 0.3); }
-        .input-box span { display: block; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 3px; pointer-events: none;}
-        .input-box .val { pointer-events: none; font-weight: bold;} 
+        body { 
+            background-image: url('3.jpg'); 
+            background-size: cover; background-position: center; background-attachment: fixed;
+            display: flex; flex-direction: column; height: 100vh; overflow: hidden; color: var(--text-dark);
+            background-color: var(--bg);
+        }
 
-        .input-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+        .glass-panel {
+            background: var(--surface);
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(176, 125, 59, 0.3); 
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+        }
 
-        .toggles { display: flex; gap: 8px; margin-top: 5px; }
-        .toggle-btn { flex: 1; padding: 10px; background: var(--bg-color); border: 2px solid #333; color: var(--text-muted); border-radius: 8px; font-weight: bold; font-size: 0.9rem; cursor: pointer; }
-        .toggle-btn.active { background: var(--danger); border-color: var(--danger); color: white; }
-
-        .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; padding: 8px; background: var(--surface); padding-bottom: 15px; flex-shrink: 0;}
-        .key-btn { background: #333; color: white; border: none; border-radius: 8px; padding: 12px; font-size: 1.3rem; font-weight: bold; cursor: pointer; touch-action: manipulation; }
-        .key-btn:active { background: #555; }
-        .key-btn.special { background: var(--primary-variant); }
-        .key-btn.danger { background: #8b0000; }
+        /* --- BEKLEME ODASI --- */
+        #screen-waiting {
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            height: 100%; padding: 20px; z-index: 200; position: absolute; inset: 0;
+        }
+        .waiting-card { width: 100%; max-width: 400px; padding: 30px 20px; border-radius: 20px; text-align: center; }
+        .waiting-card h2 { color: var(--primary-dark); font-size: 1.6rem; margin-bottom: 5px; }
+        .room-name-subtitle { font-size: 0.85rem; color: #666; margin-bottom: 20px; font-weight: bold; }
         
-        .action-btn { grid-column: span 3; background: var(--success); color: #000; padding: 12px; font-size: 1.1rem; font-weight: bold; text-transform: uppercase; border-radius: 8px; border: none; cursor: pointer; margin-top: 4px; touch-action: manipulation;}
-        .action-btn:active { background: #018786; }
+        .whatsapp-btn {
+            background: #25D366; color: white; border: none; padding: 15px; border-radius: 12px;
+            width: 100%; font-size: 1.1rem; font-weight: bold; cursor: pointer; margin-bottom: 10px;
+            display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3);
+        }
+        .copy-link { color: var(--primary-dark); font-size: 0.9rem; text-decoration: underline; cursor: pointer; margin-bottom: 25px; display: block; }
+        
+        .player-slots { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; text-align: left;}
+        
+        /* Sürüklenebilir Liste Stilleri */
+        .slot { 
+            background: rgba(255,255,255,0.8); padding: 12px 15px; border-radius: 10px; 
+            border: 2px dashed var(--primary); font-weight: 600; display: flex; align-items: center; gap: 10px;
+            transition: 0.2s;
+        }
+        .slot.draggable { cursor: grab; }
+        .slot.draggable:active { cursor: grabbing; opacity: 0.7; transform: scale(0.98); }
+        .slot.filled { background: #fff; border-style: solid; border-color: var(--primary-dark); }
+        .slot.admin-slot { background: var(--total-box); border: 2px solid var(--primary-dark); opacity: 0.9; cursor: not-allowed; }
+        .slot img { width: 30px; height: 30px; border-radius: 50%; background: #ccc; }
+        .drag-handle { margin-left: auto; color: #999; font-size: 1.2rem; cursor: grab; }
 
-        #game-over { display: none; position: fixed; inset: 0; background: var(--bg-color); flex-direction: column; align-items: center; justify-content: center; z-index: 999; }
-        #game-over h2 { font-size: 2.5rem; color: var(--primary); margin-bottom: 20px;}
-        #game-over p { font-size: 1.5rem; }
+        .btn-start {
+            background: var(--primary); color: white; border: none; padding: 15px; border-radius: 12px;
+            width: 100%; font-size: 1.2rem; font-weight: bold; cursor: pointer; transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(176, 125, 59, 0.4);
+        }
+        .btn-start:disabled { opacity: 0.5; pointer-events: none; box-shadow: none; }
+
+        /* --- OYUN MASASI --- */
+        #screen-table { display: none; flex-direction: column; height: 100%; }
+
+        .header-area { padding: 10px; border-radius: 0 0 20px 20px; z-index: 10; margin-bottom: 5px;}
+        .top-bar { display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 10px; font-size: 0.9rem;}
+        .top-bar .role-badge { color: var(--danger); font-size: 0.8rem; background: rgba(183, 75, 75, 0.1); padding: 3px 8px; border-radius: 8px;}
+        .player-headers { display: grid; grid-template-columns: 50px repeat(4, 1fr); gap: 5px; text-align: center; font-weight: 800; font-size: 0.85rem;}
+        .crown { color: #b07d3b; font-size: 1.2rem; margin-left: 2px;} 
+
+        .game-board { flex-grow: 1; overflow-y: auto; padding: 10px; padding-bottom: 250px; }
+        .round-row { display: grid; grid-template-columns: 50px repeat(4, 1fr); gap: 5px; margin-bottom: 15px; align-items: center; }
+        .round-row.is-history { opacity: 0.9; }
+
+        .yer-box { 
+            background: #fff; border: 2px solid #ddd; border-radius: 8px; 
+            text-align: center; padding: 10px 0; font-weight: 900; font-size: 1.2rem; cursor: pointer; color: var(--text-dark);
+        }
+        
+        .score-col { display: flex; flex-direction: column; gap: 5px; }
+        .input-box {
+            background: #fdfbf7; border: 1px dashed #bcaaa4; border-radius: 8px;
+            text-align: center; padding: 8px 0; font-size: 1.1rem; font-weight: bold; cursor: pointer; color: var(--text-dark);
+        }
+        .input-box.active, .yer-box.active { border: 2px solid var(--primary); background: #fff; transform: scale(1.05); box-shadow: 0 0 10px rgba(176, 125, 59, 0.3); }
+        
+        .total-box { 
+            background: var(--total-box); border-radius: 8px; text-align: center; border: 1px solid #d7ccc8;
+            padding: 8px 0; font-size: 1.1rem; font-weight: 900; color: var(--text-dark);
+        }
+        .text-red { color: #b74b4b !important; font-weight: 900; } 
+
+        /* KLAVYE EKRANI */
+        .keyboard-sheet {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: #f5f0e6; border-radius: 24px 24px 0 0; border-top: 2px solid var(--primary);
+            padding: 15px; padding-bottom: env(safe-area-inset-bottom, 20px);
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.2);
+            transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 100;
+        }
+        .keyboard-sheet.open { transform: translateY(0); }
+        .kb-header { display: flex; margin-bottom: 10px;}
+        .btn-close { width: 100%; background: #e6d7c3; color: var(--text-dark); border: 1px solid #d7ccc8; padding: 10px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 0.95rem;}
+        
+        .kb-display-area {
+            display: flex; justify-content: center; align-items: center; gap: 20px;
+            background: #fff; border: 2px solid var(--primary); border-radius: 12px;
+            padding: 10px 20px; margin-bottom: 15px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .kb-display-title { font-size: 1.2rem; font-weight: 800; color: var(--primary-dark); }
+        .kb-display-val { font-size: 2.2rem; font-weight: 900; color: var(--text-dark); }
+
+        .kb-toggles { display: flex; gap: 10px; margin-bottom: 10px; }
+        .toggle-btn { flex: 1; padding: 10px; border-radius: 8px; border: 2px solid #d7ccc8; background: #fff; font-weight: bold; cursor: pointer; color: var(--text-dark);}
+        .toggle-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+        .kb-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        .key-btn { background: #fff; border: 1px solid #e6d7c3; border-radius: 12px; padding: 15px; font-size: 1.4rem; font-weight: 800; cursor: pointer; color: var(--text-dark); box-shadow: 0 2px 0 #d7ccc8;}
+        .key-btn:active { transform: translateY(2px); box-shadow: none; }
+        .key-minus { background: var(--success); color: var(--text-dark); border-color: var(--primary);}
+        .key-clear { background: var(--danger); color: white; border-color: #8e3a3a;}
+        .key-ok { background: var(--primary); grid-column: span 3; color: white; font-size: 1.2rem; border-color: var(--primary-dark);}
+
+        /* ALT BUTONLAR */
+        .footer-actions {
+            position: fixed; bottom: 20px; left: 15px; right: 15px; z-index: 50; display: flex; gap: 10px;
+        }
+        .btn-action-small {
+            flex: 1; padding: 15px; border-radius: 16px; font-size: 1.1rem; font-weight: bold;
+            border: 2px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.2); cursor: pointer;
+        }
+        .btn-reset { background: #fff; color: var(--text-dark); }
+        .btn-early-exit { background: var(--danger); color: white; border-color: var(--danger); }
+        .footer-finish { position: fixed; bottom: 20px; left: 15px; right: 15px; z-index: 50; display: none; }
+        .btn-final {
+            background: var(--primary-dark); color: white; width: 100%; padding: 18px; border-radius: 16px;
+            font-size: 1.2rem; font-weight: 900; border: 2px solid #fff; box-shadow: 0 5px 20px rgba(0,0,0,0.4);
+            cursor: pointer; animation: pulse 2s infinite; text-transform: uppercase;
+        }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>Sargon Stats: Muğla Okeyi</h1>
-        <p id="round-display">El: 1 / 9</p>
-    </header>
+    <div id="screen-waiting" class="glass-panel">
+        <div class="waiting-card glass-panel">
+            <h2>Masayı Hazırla</h2>
+            <div class="room-name-subtitle" id="lobby-room-name">Yükleniyor...</div>
+            
+            <div id="admin-controls">
+                <button class="whatsapp-btn" id="btn-wa-invite">💬 WhatsApp ile Davet Gönder</button>
+                <span class="copy-link" id="btn-copy-link">Veya Linki Kopyala</span>
+            </div>
+            
+            <div class="player-slots" id="sortable-slots">
+                <div class="slot draggable" draggable="true" data-id="p1" id="slot-p1"><img src="https://via.placeholder.com/30/ccc/fff?text=?"> <span>1. Bekleniyor...</span> <span class="drag-handle">☰</span></div>
+                <div class="slot draggable" draggable="true" data-id="p2" id="slot-p2"><img src="https://via.placeholder.com/30/ccc/fff?text=?"> <span>2. Bekleniyor...</span> <span class="drag-handle">☰</span></div>
+                <div class="slot draggable" draggable="true" data-id="p3" id="slot-p3"><img src="https://via.placeholder.com/30/ccc/fff?text=?"> <span>3. Bekleniyor...</span> <span class="drag-handle">☰</span></div>
+                
+                <div class="slot admin-slot" data-id="p4" id="slot-p4"><img src="https://via.placeholder.com/30/b07d3b/fff?text=S"> <span id="admin-name-display">4. Sen (Yönetici)</span></div>
+            </div>
 
-    <div class="scoreboard">
-        <div class="player-col"><h3>1. Oyuncu</h3><div class="score" id="score-p1">0</div></div>
-        <div class="player-col"><h3>2. Oyuncu</h3><div class="score" id="score-p2">0</div></div>
-        <div class="player-col"><h3>3. Oyuncu</h3><div class="score" id="score-p3">0</div></div>
-        <div class="player-col"><h3>4. Oyuncu</h3><div class="score" id="score-p4">0</div></div>
-    </div>
-
-    <div class="input-area" id="game-area">
-        <div class="input-box active" data-target="yer" id="input-yer">
-            <span>Yer Değeri</span>
-            <div class="val" id="val-yer">-</div>
-        </div>
-        <div class="input-grid">
-            <div class="input-box" data-target="p1" id="input-p1"><span>1. Oyuncu Ceza</span><div class="val" id="val-p1">-</div></div>
-            <div class="input-box" data-target="p2" id="input-p2"><span>2. Oyuncu Ceza</span><div class="val" id="val-p2">-</div></div>
-            <div class="input-box" data-target="p3" id="input-p3"><span>3. Oyuncu Ceza</span><div class="val" id="val-p3">-</div></div>
-            <div class="input-box" data-target="p4" id="input-p4"><span>4. Oyuncu Ceza</span><div class="val" id="val-p4">-</div></div>
-        </div>
-        <div class="toggles">
-            <button type="button" class="toggle-btn" data-toggle="cift" id="btn-cift">Çiftten Bitti</button>
-            <button type="button" class="toggle-btn" data-toggle="okey" id="btn-okey">Okey Attı</button>
+            <button class="btn-start" id="btn-start-game">Oyunu Başlat</button>
         </div>
     </div>
 
-    <div class="keypad" id="keypad-area">
-        <button type="button" class="key-btn" data-val="1">1</button>
-        <button type="button" class="key-btn" data-val="2">2</button>
-        <button type="button" class="key-btn" data-val="3">3</button>
-        <button type="button" class="key-btn" data-val="4">4</button>
-        <button type="button" class="key-btn" data-val="5">5</button>
-        <button type="button" class="key-btn" data-val="6">6</button>
-        <button type="button" class="key-btn" data-val="7">7</button>
-        <button type="button" class="key-btn" data-val="8">8</button>
-        <button type="button" class="key-btn" data-val="9">9</button>
-        <button type="button" class="key-btn danger" data-val="C">C</button>
-        <button type="button" class="key-btn" data-val="0">0</button>
-        <button type="button" class="key-btn special" data-val="-10">-10</button>
-        <button type="button" class="action-btn" id="btn-next">SONRAKİ EL</button>
+    <div id="screen-table">
+        <div class="header-area glass-panel">
+            <div class="top-bar">
+                <span id="txt-room-title">Yükleniyor...</span>
+                <span class="role-badge" id="txt-role-badge">YÖNETİCİ</span>
+            </div>
+            <div class="player-headers">
+                <div>Yer</div>
+                <div id="hdr-p1">1. Oyuncu</div>
+                <div id="hdr-p2">2. Oyuncu</div>
+                <div id="hdr-p3">3. Oyuncu</div>
+                <div id="hdr-p4">Sen</div>
+            </div>
+        </div>
+
+        <div class="game-board" id="board"></div>
+
+        <div class="footer-actions" id="footer-actions">
+            <button class="btn-action-small btn-reset" id="btn-new-game">Sıfırla</button>
+            <button class="btn-action-small btn-early-exit" id="btn-early-exit">Masayı Bitir</button>
+        </div>
+
+        <div class="footer-finish" id="footer-finish">
+            <button class="btn-final" id="btn-finish-game">Oyunu Bitir ve İstatistikleri Kaydet</button>
+        </div>
     </div>
 
-    <div id="game-over">
-        <h2>Maç Bitti!</h2>
-        <p id="winner-text"></p>
-        <button type="button" class="action-btn" style="margin-top: 30px; padding: 15px 30px;" id="btn-restart">Yeni Oyun</button>
+    <div class="keyboard-sheet" id="keyboard">
+        <div class="kb-header"><button class="btn-close" id="btn-kb-close">▼ Klavyeyi Kapat</button></div>
+        <div class="kb-display-area">
+            <div class="kb-display-title" id="kb-title">El 1/9: Yer</div>
+            <div class="kb-display-val" id="kb-display-val">-</div>
+        </div>
+        <div class="kb-toggles" id="kb-toggles">
+            <button class="toggle-btn" id="tgl-cift">Çiftten Bitti</button>
+            <button class="toggle-btn" id="tgl-okey">Okey Attı</button>
+        </div>
+        <div class="kb-grid">
+            <button class="key-btn" data-val="1">1</button><button class="key-btn" data-val="2">2</button><button class="key-btn" data-val="3">3</button>
+            <button class="key-btn" data-val="4">4</button><button class="key-btn" data-val="5">5</button><button class="key-btn" data-val="6">6</button>
+            <button class="key-btn" data-val="7">7</button><button class="key-btn" data-val="8">8</button><button class="key-btn" data-val="9">9</button>
+            <button class="key-btn key-minus" data-val="-10">-10</button><button class="key-btn" data-val="0">0</button><button class="key-btn key-clear" data-val="C">Sil</button>
+            <button class="key-btn key-ok" id="btn-kb-ok">TAMAM</button>
+        </div>
     </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
-        import { getFirestore, doc, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+    <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        // --- 1. SİSTEM VE ROL KURULUMU ---
+        const urlParams = new URLSearchParams(window.location.search);
+        let masaId = urlParams.get('masa');
+        const isViewer = masaId ? true : false; // Linkten geliyorsa izleyici
+        
+        let localPlayerName = "Yönetici"; 
+
+        if (!masaId) {
+            // Yöneticiyse rastgele masa ID'si üret ve URL'ye çaktırmadan ekle
+            masaId = 'masa_' + Math.random().toString(36).substr(2, 9);
+            window.history.pushState({}, '', '?masa=' + masaId);
+        } else if (isViewer) {
+            // İzleyiciyse geçici olarak adını soralım (Google Auth gelene kadar)
+            localPlayerName = prompt("Muğla Okeyi masasına davetlisiniz! Lütfen isminizi girin:") || "Misafir";
+            document.getElementById('admin-controls').style.display = 'none'; // İzleyici davet atamaz
+            document.getElementById('btn-start-game').style.display = 'none'; // Oyunu başlatamaz
+            document.getElementById('txt-role-badge').innerText = "İZLEYİCİ";
+            document.getElementById('txt-role-badge').style.color = "var(--primary-dark)";
+            document.getElementById('footer-actions').style.display = 'none'; // Butonlar gizli
+        }
 
         const firebaseConfig = {
             apiKey: "AIzaSyDtzfLUK2paSlyY1wF7WlLhLQLpUztJogg",
@@ -147,176 +260,337 @@
             messagingSenderId: "334323498833",
             appId: "1:334323498833:web:f6ddc5a63b940905da5d70"
         };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const roomRef = db.collection("rooms").doc(masaId);
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const roomRef = doc(db, "rooms", "MxIaeR7QokYg9Dy2G7vt");
+        // --- DEĞİŞKENLER ---
+        let gameHistory = []; 
+        let currentRound = 1;
+        let currentInputs = { yer: '', p1: '', p2: '', p3: '', p4: '' };
+        let currentFlags = { okey: false, cift: false };
+        let activeEdit = { isOpen: false, roundIdx: null, field: null, inputs: {}, flags: {} };
+        
+        let playerNames = { p1: 'Bekleniyor...', p2: 'Bekleniyor...', p3: 'Bekleniyor...', p4: 'Yönetici' };
+        let gameStatus = 'WAITING'; // WAITING veya PLAYING
+        let roomName = "";
 
-        document.addEventListener('DOMContentLoaded', () => {
-            let currentRound = 1;
-            const maxRounds = 9;
-            let activeField = 'yer';
-            
-            let grandTotals = { p1: 0, p2: 0, p3: 0, p4: 0 };
-            let currentInputs = { yer: '', p1: '', p2: '', p3: '', p4: '' };
-            let toggles = { cift: false, okey: false };
+        const board = document.getElementById('board');
+        const keyboard = document.getElementById('keyboard');
 
-            // --- FİREBASE CANLI DİNLEME ---
-            onSnapshot(roomRef, (docSnap) => {
-                if (docSnap.exists()) {
-                    const masaVerisi = docSnap.data();
-                    console.log("🔥 Firebase'den Gelen Güncel Durum:", masaVerisi);
-                    
-                    // 1. Eli ve Buton Yazısını Güncelle
-                    currentRound = masaVerisi.currentRound || 1;
-                    document.getElementById('round-display').innerText = `El: ${currentRound} / ${maxRounds}`;
-                    
-                    if (currentRound >= maxRounds) {
-                        document.getElementById('btn-next').innerText = "BİTİR VE SONUÇLAR";
-                    } else {
-                        document.getElementById('btn-next').innerText = "SONRAKİ EL";
-                    }
-                    
-                    // 2. Oyuncu Skorlarını Güncelle (Eğer boşsa 0 kabul et)
-                    grandTotals.p1 = masaVerisi.p1Score || 0;
-                    grandTotals.p2 = masaVerisi.p2Score || 0;
-                    grandTotals.p3 = masaVerisi.p3Score || 0;
-                    grandTotals.p4 = masaVerisi.p4Score || 0;
-
-                    document.getElementById('score-p1').innerText = grandTotals.p1;
-                    document.getElementById('score-p2').innerText = grandTotals.p2;
-                    document.getElementById('score-p3').innerText = grandTotals.p3;
-                    document.getElementById('score-p4').innerText = grandTotals.p4;
-
-                    // 3. Yer Değerini Güncelle (Eğer o an yazmıyorsak)
-                    if(activeField !== 'yer' || currentInputs['yer'] === '') {
-                        let okunanYer = masaVerisi.yerDegeri || 0;
-                        document.getElementById('val-yer').innerText = okunanYer === 0 ? '-' : okunanYer;
-                    }
-                    
-                } else {
-                    console.log("❌ Böyle bir masa bulunamadı!");
-                }
-            });
-
-            // --- ARAYÜZ VE BUTON KODLARI ---
-            document.querySelectorAll('.input-box').forEach(box => {
-                box.addEventListener('click', function() {
-                    document.querySelectorAll('.input-box').forEach(el => el.classList.remove('active'));
-                    this.classList.add('active');
-                    activeField = this.getAttribute('data-target');
-                });
-            });
-
-            document.querySelectorAll('.toggle-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    let type = this.getAttribute('data-toggle');
-                    toggles[type] = !toggles[type];
-                    if(toggles[type]) this.classList.add('active');
-                    else this.classList.remove('active');
-                });
-            });
-
-            document.querySelectorAll('.key-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    let key = this.getAttribute('data-val');
-                    if (key === 'C') {
-                        currentInputs[activeField] = '';
-                    } else if (key === '-10') {
-                        currentInputs[activeField] = '-10';
-                    } else {
-                        if(currentInputs[activeField] === '-10') currentInputs[activeField] = '';
-                        currentInputs[activeField] += key;
-                    }
-                    updateDisplay();
-                });
-            });
-
-            // --- HESAPLA VE FİREBASE'E GÖNDER ---
-            document.getElementById('btn-next').addEventListener('click', async () => {
-                let yerDegeri = parseInt(currentInputs.yer) || 0;
-                let activeTogglesCount = (toggles.cift ? 1 : 0) + (toggles.okey ? 1 : 0);
-                let loserMult = 1, winnerVal = -10;
-
-                if (activeTogglesCount === 1) { loserMult = 2; winnerVal = -100; } 
-                else if (activeTogglesCount === 2) { loserMult = 4; winnerVal = -200; }
-
-                const players = ['p1', 'p2', 'p3', 'p4'];
-                players.forEach(p => {
-                    let val = parseInt(currentInputs[p]);
-                    if (isNaN(val)) val = 0;
-
-                    if (val === -10) { grandTotals[p] += (winnerVal * yerDegeri); } 
-                    else if (val > 0) { grandTotals[p] += (val * loserMult * yerDegeri); }
-                });
-
-                currentInputs = { yer: '', p1: '', p2: '', p3: '', p4: '' };
-                toggles = { cift: false, okey: false };
-                document.querySelectorAll('.toggle-btn').forEach(btn => btn.classList.remove('active'));
-                updateDisplay();
+        // --- YÖNETİCİ: MASA OLUŞTURMA ---
+        async function initializeRoom() {
+            if (!isViewer) {
+                const now = new Date();
+                const timeString = `${now.getDate()} Mayıs ${now.getHours()}:${now.getMinutes() < 10 ? '0' : ''}${now.getMinutes()}`;
+                roomName = `${timeString} - Muğla Okeyi`;
                 
-                document.querySelectorAll('.input-box').forEach(el => el.classList.remove('active'));
-                document.getElementById('input-yer').classList.add('active');
-                activeField = 'yer';
-
-                currentRound++;
-
-                // --- GÜNCELLENEN SKORLARI DA FİREBASE'E GÖNDER ---
-                try {
-                    await updateDoc(roomRef, {
-                        currentRound: currentRound,
-                        yerDegeri: 0, // YENİ EL İÇİN YER DEĞERİNİ SIFIRLIYORUZ
-                        p1Score: grandTotals.p1,
-                        p2Score: grandTotals.p2,
-                        p3Score: grandTotals.p3,
-                        p4Score: grandTotals.p4
-                    });
-                    console.log("✅ Veriler ve Skorlar Firebase'e başarıyla gönderildi!");
-                } catch (error) {
-                    console.error("❌ Firebase'e veri gönderilirken hata:", error);
-                }
-
-                if (currentRound > maxRounds) {
-                    document.getElementById('game-area').style.display = 'none';
-                    document.getElementById('keypad-area').style.display = 'none';
-                    
-                    let minScore = Math.min(grandTotals.p1, grandTotals.p2, grandTotals.p3, grandTotals.p4);
-                    let winners = players.filter(p => grandTotals[p] === minScore).map(p => p.replace('p', '') + '. Oyuncu');
-                    document.getElementById('winner-text').innerText = "Şampiyon: " + winners.join(" & ") + "\nSkor: " + minScore;
-                    document.getElementById('game-over').style.display = 'flex';
-                }
-            });
-
-            // --- YENİ OYUN (FİREBASE SIFIRLAMA) ---
-            document.getElementById('btn-restart').addEventListener('click', async () => {
-                try {
-                    await updateDoc(roomRef, {
-                        currentRound: 1,
-                        yerDegeri: 0,
-                        p1Score: 0,
-                        p2Score: 0,
-                        p3Score: 0,
-                        p4Score: 0
-                    });
-                    console.log("✅ Yeni oyun için veritabanı sıfırlandı!");
-                    location.reload(); 
-                } catch (error) {
-                    console.error("❌ Sıfırlama sırasında hata:", error);
-                }
-            });
-
-            // --- GÖRSEL GÜNCELLEME DÜZELTİLDİ ---
-            function updateDisplay() {
-                const fields = ['yer', 'p1', 'p2', 'p3', 'p4'];
-                fields.forEach(f => {
-                    if (currentInputs[f] !== '') {
-                        document.getElementById('val-' + f).innerText = currentInputs[f];
-                    } else {
-                        document.getElementById('val-' + f).innerText = '-';
+                await roomRef.set({
+                    roomName: roomName,
+                    status: 'WAITING',
+                    players: { p1: '', p2: '', p3: '', p4: 'Sen (Yönetici)' },
+                    currentRound: 1,
+                    history: []
+                });
+            } else {
+                // İzleyici olarak odaya girdiğini Firebase'e yaz (Basit bir diziye ekleme mantığı)
+                roomRef.get().then(doc => {
+                    if (doc.exists) {
+                        let data = doc.data();
+                        let currentPlayers = data.players || {};
+                        // İlk boş bulduğu yere oturt (MVP mantığı)
+                        if (currentPlayers.p1 === '') currentPlayers.p1 = localPlayerName;
+                        else if (currentPlayers.p2 === '') currentPlayers.p2 = localPlayerName;
+                        else if (currentPlayers.p3 === '') currentPlayers.p3 = localPlayerName;
+                        
+                        roomRef.update({ players: currentPlayers });
                     }
                 });
             }
+        }
+
+        // --- WHATSAPP VE LİNK DAVETİ ---
+        document.getElementById('btn-wa-invite').onclick = () => {
+            const link = window.location.href;
+            const msg = `SargonStats'ta okey masası kurdum! Hemen oynamak veya izlemek için tıkla: ${link}`;
+            window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+        };
+        document.getElementById('btn-copy-link').onclick = () => {
+            navigator.clipboard.writeText(window.location.href).then(() => alert("Masa linki kopyalandı!"));
+        };
+
+        // --- SÜRÜKLE BIRAK (DRAG & DROP) MANTIĞI ---
+        const slots = document.querySelectorAll('.slot.draggable');
+        let draggedItem = null;
+
+        slots.forEach(slot => {
+            slot.addEventListener('dragstart', function() { draggedItem = this; setTimeout(() => this.style.opacity = '0.5', 0); });
+            slot.addEventListener('dragend', function() { draggedItem = null; this.style.opacity = '1'; });
+            slot.addEventListener('dragover', function(e) { e.preventDefault(); });
+            slot.addEventListener('dragenter', function(e) { e.preventDefault(); this.style.borderStyle = 'solid'; });
+            slot.addEventListener('dragleave', function() { this.style.borderStyle = 'dashed'; });
+            slot.addEventListener('drop', function() {
+                this.style.borderStyle = 'dashed';
+                if (draggedItem && this !== draggedItem) {
+                    // İçerikleri takas et
+                    let tempHTML = this.innerHTML;
+                    this.innerHTML = draggedItem.innerHTML;
+                    draggedItem.innerHTML = tempHTML;
+                    updatePlayerNamesFromSlots(); // Yeni dizilimi kaydet
+                }
+            });
         });
+
+        function updatePlayerNamesFromSlots() {
+            playerNames.p1 = document.getElementById('slot-p1').querySelector('span').innerText.replace(/^\d+\.\s*/, '');
+            playerNames.p2 = document.getElementById('slot-p2').querySelector('span').innerText.replace(/^\d+\.\s*/, '');
+            playerNames.p3 = document.getElementById('slot-p3').querySelector('span').innerText.replace(/^\d+\.\s*/, '');
+            
+            // Eğer Firebase güncellenecekse (Yönetici)
+            if(!isViewer) roomRef.update({ players: playerNames });
+        }
+
+        // --- FİREBASE CANLI DİNLEME ---
+        roomRef.onSnapshot((docSnap) => {
+            if (docSnap.exists) {
+                const data = docSnap.data();
+                gameStatus = data.status || 'WAITING';
+                gameHistory = data.history || [];
+                currentRound = data.currentRound || 1;
+                roomName = data.roomName || 'Oyun Masası';
+                playerNames = data.players || playerNames;
+
+                // Başlıkları Güncelle
+                document.getElementById('lobby-room-name').innerText = roomName;
+                document.getElementById('txt-room-title').innerText = roomName;
+
+                if (gameStatus === 'WAITING') {
+                    document.getElementById('screen-waiting').style.display = 'flex';
+                    document.getElementById('screen-table').style.display = 'none';
+                    
+                    // Gelen oyuncuları bekleme odasındaki slotlara yazdır
+                    ['p1', 'p2', 'p3'].forEach(p => {
+                        const slotSpan = document.getElementById(`slot-${p}`).querySelector('span');
+                        let name = playerNames[p] || '';
+                        slotSpan.innerText = `${p.replace('p','')} . ` + (name !== '' ? name : "Bekleniyor...");
+                        if(name !== '') document.getElementById(`slot-${p}`).classList.add('filled');
+                    });
+                } else if (gameStatus === 'PLAYING') {
+                    document.getElementById('screen-waiting').style.display = 'none';
+                    document.getElementById('screen-table').style.display = 'flex';
+                    renderBoard();
+                    updateHeaders();
+                    checkGameEnd();
+                }
+            } else {
+                initializeRoom(); 
+            }
+        });
+
+        // --- OYUNU BAŞLAT ---
+        document.getElementById('btn-start-game').onclick = () => {
+            roomRef.update({ status: 'PLAYING', currentRound: 1, history: [] });
+        };
+
+        // --- EKRAN ÇİZİMİ ---
+        function renderBoard() {
+            board.innerHTML = '';
+            let runningTotals = { p1: 0, p2: 0, p3: 0, p4: 0 };
+
+            gameHistory.forEach((h, idx) => {
+                const row = document.createElement('div'); row.className = 'round-row is-history';
+                const isEditing = (activeEdit.isOpen && activeEdit.roundIdx === idx);
+                const displayData = isEditing ? activeEdit.inputs : h.inputs;
+                
+                row.appendChild(createCell('yer-box', displayData.yer || h.yer, () => openEdit(idx, 'yer'), isEditing && activeEdit.field === 'yer'));
+                ['p1', 'p2', 'p3', 'p4'].forEach(p => {
+                    const col = document.createElement('div'); col.className = 'score-col';
+                    runningTotals[p] += h.roundScores[p];
+                    const blueBox = createCell('total-box', runningTotals[p]);
+                    if (h.maxPenalty > 0 && h.roundScores[p] === h.maxPenalty && !isEditing) blueBox.classList.add('text-red');
+                    
+                    col.appendChild(createCell('input-box', displayData[p], () => {
+                        let yerDegeri = (isEditing) ? activeEdit.inputs.yer : h.yer;
+                        if(!yerDegeri || yerDegeri === '') { alert("Lütfen önce Yer değerini girin!"); return; }
+                        openEdit(idx, p);
+                    }, isEditing && activeEdit.field === p));
+                    
+                    col.appendChild(blueBox);
+                    row.appendChild(col);
+                });
+                board.appendChild(row);
+            });
+
+            if (currentRound <= 9) {
+                document.getElementById('txt-round').innerText = `El: ${currentRound} / 9`;
+                const activeRow = document.createElement('div'); activeRow.className = 'round-row';
+                const isEditing = (activeEdit.isOpen && activeEdit.roundIdx === -1);
+                const displayData = isEditing ? activeEdit.inputs : currentInputs;
+                const activeFlags = isEditing ? activeEdit.flags : currentFlags;
+
+                const liveCalc = calculateSingleRound(displayData.yer, displayData, activeFlags);
+
+                activeRow.appendChild(createCell('yer-box', displayData.yer, () => openEdit(-1, 'yer'), isEditing && activeEdit.field === 'yer'));
+                ['p1', 'p2', 'p3', 'p4'].forEach(p => {
+                    const col = document.createElement('div'); col.className = 'score-col';
+                    col.appendChild(createCell('input-box', displayData[p], () => {
+                        if(!displayData.yer || displayData.yer === '') { alert("Lütfen önce Yer değerini girin!"); return; }
+                        openEdit(-1, p);
+                    }, isEditing && activeEdit.field === p));
+                    
+                    let liveTotal = runningTotals[p] + (liveCalc.roundScores[p] || 0);
+                    col.appendChild(createCell('total-box', liveTotal)); 
+                    activeRow.appendChild(col);
+                });
+                board.appendChild(activeRow);
+            }
+        }
+
+        // ÇİFT TIKLAMA YERİNE MOBİLDE SORUNSUZ OLMASI İÇİN TEK TIKLAMAYA GERİ DÖNÜLDÜ 
+        // (Sürükle bırak gelince çift tıklama iOS'ta bazen donma yapabilir, "İzleyici" kısıtlaması eklendi)
+        function createCell(className, text, onClick, isActive) {
+            const div = document.createElement('div');
+            div.className = className + (isActive ? ' active' : '');
+            div.innerText = (text === '' || text === undefined) ? '-' : text;
+            if (onClick) {
+                div.onclick = () => {
+                    if (isViewer) {
+                        alert("İzleyici modunda tabloyu değiştiremezsiniz.");
+                        return;
+                    }
+                    onClick();
+                };
+            }
+            return div;
+        }
+
+        function openEdit(roundIdx, field) {
+            if (isViewer) return; // İzleyici klavyeyi açamaz
+
+            if (activeEdit.roundIdx !== roundIdx || !activeEdit.isOpen) {
+                activeEdit.roundIdx = roundIdx;
+                if (roundIdx === -1) {
+                    activeEdit.inputs = { ...currentInputs }; activeEdit.flags = { ...currentFlags };
+                } else {
+                    let h = gameHistory[roundIdx];
+                    activeEdit.inputs = { ...h.inputs }; activeEdit.flags = { ...h.flags };
+                }
+            }
+            activeEdit.isOpen = true; activeEdit.field = field;
+            
+            let rNum = roundIdx === -1 ? currentRound : (roundIdx + 1);
+            let fName = field === 'yer' ? 'Yer Değeri' : playerNames[field];
+            document.getElementById('kb-title').innerText = `El ${rNum}/9: ${fName}`;
+            
+            let val = activeEdit.inputs[field];
+            document.getElementById('kb-display-val').innerText = (val === '' || val === undefined) ? '-' : val;
+
+            keyboard.classList.add('open');
+            updateTogglesUI(); renderBoard();
+
+            setTimeout(() => {
+                const activeCell = document.querySelector('.input-box.active, .yer-box.active');
+                if (activeCell) activeCell.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
+        }
+
+        function updateTogglesUI() {
+            document.getElementById('tgl-okey').className = activeEdit.flags.okey ? 'toggle-btn active' : 'toggle-btn';
+            document.getElementById('tgl-cift').className = activeEdit.flags.cift ? 'toggle-btn active' : 'toggle-btn';
+        }
+
+        document.querySelectorAll('.key-btn[data-val]').forEach(btn => {
+            btn.onclick = () => {
+                if (isViewer) return;
+                const val = btn.dataset.val; let f = activeEdit.field;
+                if (activeEdit.inputs[f] === undefined) activeEdit.inputs[f] = '';
+                
+                if (val === 'C') activeEdit.inputs[f] = '';
+                else if (val === '-10') activeEdit.inputs[f] = '-10';
+                else { if (activeEdit.inputs[f] === '-10') activeEdit.inputs[f] = ''; activeEdit.inputs[f] += val; }
+                
+                document.getElementById('kb-display-val').innerText = activeEdit.inputs[f] === '' ? '-' : activeEdit.inputs[f];
+                renderBoard();
+            };
+        });
+
+        document.getElementById('tgl-okey').onclick = () => { activeEdit.flags.okey = !activeEdit.flags.okey; updateTogglesUI(); renderBoard(); };
+        document.getElementById('tgl-cift').onclick = () => { activeEdit.flags.cift = !activeEdit.flags.cift; updateTogglesUI(); renderBoard(); };
+
+        document.getElementById('btn-kb-ok').onclick = () => {
+            if (isViewer) return;
+            if (activeEdit.roundIdx === -1) {
+                currentInputs = { ...activeEdit.inputs }; currentFlags = { ...activeEdit.flags };
+                if (activeEdit.field === 'p4') {
+                    gameHistory.push(calculateSingleRound(currentInputs.yer, currentInputs, currentFlags));
+                    currentInputs = { yer: '', p1: '', p2: '', p3: '', p4: '' }; currentFlags = { okey: false, cift: false };
+                    currentRound++; 
+                } 
+                activeEdit.isOpen = false; keyboard.classList.remove('open');
+            } else {
+                gameHistory[activeEdit.roundIdx].inputs = { ...activeEdit.inputs };
+                gameHistory[activeEdit.roundIdx].flags = { ...activeEdit.flags };
+                recalculateFullHistory(); activeEdit.isOpen = false; keyboard.classList.remove('open');
+            }
+            roomRef.update({ history: gameHistory, currentRound: currentRound });
+            renderBoard(); 
+        };
+
+        function calculateSingleRound(yerVal, inputs, flags) {
+            let yer = parseInt(yerVal) || 1;
+            let winMult = -10, loseMult = 1;
+            if (flags.okey && flags.cift) { winMult = -200; loseMult = 4; }
+            else if (flags.okey || flags.cift) { winMult = -100; loseMult = 2; }
+            let roundScores = {}; let maxPenalty = -1;
+            ['p1','p2','p3','p4'].forEach(p => {
+                let v = parseInt(inputs[p]) || 0;
+                if (v === -10) roundScores[p] = (winMult * yer);
+                else { roundScores[p] = (v * loseMult * yer); if (roundScores[p] > maxPenalty) maxPenalty = roundScores[p]; }
+            });
+            return { yer, inputs: { ...inputs }, flags: { ...flags }, roundScores, maxPenalty };
+        }
+
+        function recalculateFullHistory() {
+            gameHistory = gameHistory.map(h => calculateSingleRound(h.inputs.yer || h.yer, h.inputs, h.flags));
+        }
+
+        function updateHeaders() {
+            let totals = { p1: 0, p2: 0, p3: 0, p4: 0 };
+            gameHistory.forEach(h => { ['p1','p2','p3','p4'].forEach(p => totals[p] += h.roundScores[p]); });
+            ['p1','p2','p3','p4'].forEach(p => {
+                const hdr = document.getElementById(`hdr-${p}`); 
+                hdr.innerHTML = playerNames[p]; // Davetli isimlerini tabloya yazdır
+                if (gameHistory.length > 0) {
+                    let min = Math.min(totals.p1, totals.p2, totals.p3, totals.p4);
+                    if (totals[p] === min) hdr.innerHTML += ' <span class="crown">👑</span>';
+                }
+            });
+        }
+
+        function checkGameEnd() {
+            if (currentRound > 9) {
+                document.getElementById('txt-round').innerText = "Maç Bitti!";
+                if(!isViewer) {
+                    document.getElementById('footer-actions').style.display = 'none'; 
+                    document.getElementById('footer-finish').style.display = 'block'; 
+                }
+            } else {
+                if(!isViewer) {
+                    document.getElementById('footer-actions').style.display = 'flex';
+                    document.getElementById('footer-finish').style.display = 'none';
+                }
+            }
+        }
+
+        document.getElementById('btn-kb-close').onclick = () => { activeEdit.isOpen = false; keyboard.classList.remove('open'); renderBoard(); };
+        
+        document.getElementById('btn-new-game').onclick = () => {
+            if(confirm("Tüm geçmiş silinecek. Emin misiniz?")) roomRef.update({ status: 'WAITING', currentRound: 1, history: [], players: { p1: '', p2: '', p3: '', p4: 'Sen (Yönetici)' } });
+        };
+
+        // İLK YÜKLEME KONTROLÜ
+        if(!masaId) initializeRoom();
+
     </script>
 </body>
 </html>
